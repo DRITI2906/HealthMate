@@ -1,6 +1,6 @@
 // API utility functions for making authenticated requests to the backend
 
-const API_BASE_URL = 'https://backend-healthmate-y1f1.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://healthai-yj1c.onrender.com';
 
 export interface ApiResponse<T = any> {
   success?: boolean;
