@@ -714,6 +714,6 @@ async def assess_symptoms(request: SymptomRequest):
         print(f"Error in symptom assessment: {e}")
         raise HTTPException(status_code=500, detail=f"Error analyzing symptoms: {str(e)}")
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
