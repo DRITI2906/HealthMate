@@ -115,7 +115,7 @@ export function SymptomChecker() {
         bodyPart: symptom.bodyPart || getBodyPart(symptom.name)
       }));
 
-      const response = await fetch('http://localhost:8000/api/assess-symptoms', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://healthai-yj1c.onrender.com'}/api/assess-symptoms`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ symptoms: formattedSymptoms }),

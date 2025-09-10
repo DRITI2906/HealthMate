@@ -322,7 +322,7 @@ export function MedicationReminders({ showAddButton = true }: MedicationReminder
         return;
       }
 
-      const response = await fetch(`http://localhost:8000/api/medications/${medId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://healthai-yj1c.onrender.com'}/api/medications/${medId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${user.access_token}`,

@@ -48,7 +48,7 @@ export function SettingsModal({ isOpen, onClose, profileData, onProfileUpdate }:
       if (isOpen && user && user.access_token) {
         setIsLoading(true);
         try {
-          const response = await fetch('http://localhost:8000/api/profile', {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://healthai-yj1c.onrender.com'}/api/profile`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${user.access_token}`,
