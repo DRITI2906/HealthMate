@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+langchain
+langgraph
+crewai
+openai
+langchain-google-genai
+python-dotenv
+requests
+psycopg2-binary
+sqlalchemy
+alembic
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
