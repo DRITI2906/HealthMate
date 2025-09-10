@@ -37,8 +37,8 @@ def format_response(text: str) -> str:
     # Ensure bullets use '-' instead of '*'
     text = re.sub(r"^\s*\*", "-", text, flags=re.MULTILINE)
 
-    # Fix bullets like "- **Thing:**" → keep them consistent
-    text = re.sub(r"-\s*\*\*(.+?):\*\*", r"- **\1**:", text)
+    # Fix bullets like "- *Thing:*" → keep them consistent
+    text = re.sub(r"-\s*\\(.+?):\\", r"- *\1*:", text)
 
     # Add line breaks after headings (## or ###)
     text = re.sub(r"(#+\s[^\n]+)", r"\1\n", text)
@@ -67,12 +67,20 @@ async def startup_event():
         except Exception as e2:
             print(f"Error creating database tables: {e2}")
 
+# List of allowed origins (add your frontend domains here)
+origins = [
+    "https://health-mate-red.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173",  # Vite default port
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    expose_headers=["Content-Length"],
 )
 
 class ChatRequest(BaseModel):
@@ -132,10 +140,10 @@ PROMPT_TEMPLATES = {
         "Response Style: {response_style}\n\n"
         "If response_style is 'concise': Keep your answer brief and to the point (2-3 sentences max). "
         "If response_style is 'detailed': Provide comprehensive information with examples and explanations.\n\n"
-        "Always format your response in **Markdown** with:\n"
+        "Always format your response in *Markdown* with:\n"
         "- Clear headings (## Heading)\n"
         "- Bullet points (- item)\n"
-        "- Bold keywords (**word**)\n\n"
+        "- Bold keywords (*word*)\n\n"
         "Answer the following user question:\nUser: {message}"
     ),
     "symptom": (
@@ -143,10 +151,10 @@ PROMPT_TEMPLATES = {
         "Response Style: {response_style}\n\n"
         "If response_style is 'concise': Give brief, direct answers (2-3 sentences max). "
         "If response_style is 'detailed': Provide comprehensive analysis with multiple sections.\n\n"
-        "Always format your response in **Markdown** with:\n"
+        "Always format your response in *Markdown* with:\n"
         "- Clear sections (## Symptoms, ## Possible Causes, ## Next Steps)\n"
         "- Bullet points (- item)\n"
-        "- Bold important terms (**term**)\n\n"
+        "- Bold important terms (*term*)\n\n"
         "User: {message}"
     ),
     "nutrition": (
@@ -154,7 +162,7 @@ PROMPT_TEMPLATES = {
         "Response Style: {response_style}\n\n"
         "If response_style is 'concise': Keep advice brief and actionable (2-3 sentences max). "
         "If response_style is 'detailed': Provide comprehensive guidance with examples and explanations.\n\n"
-        "Always format your response in **Markdown** with:\n"
+        "Always format your response in *Markdown* with:\n"
         "- Headings for structure (## Diet Tips, ## Foods to Include, ## Foods to Avoid)\n"
         "- Bullet points for lists\n"
         "- Bold important nutrients and food names\n\n"
@@ -165,7 +173,7 @@ PROMPT_TEMPLATES = {
         "Response Style: {response_style}\n\n"
         "If response_style is 'concise': Give brief, supportive advice (2-3 sentences max). "
         "If response_style is 'detailed': Provide comprehensive strategies with examples and resources.\n\n"
-        "Always format your response in **Markdown** with:\n"
+        "Always format your response in *Markdown* with:\n"
         "- Headings for clarity (## Coping Strategies, ## Resources, ## Self-Care)\n"
         "- Bullet points for advice\n"
         "- Bold key ideas for emphasis\n\n"
@@ -292,7 +300,7 @@ def test_llm():
             "response_type": str(type(response))
         }
     except Exception as e:
-        return {"error": str(e), "traceback": str(e.__traceback__)}
+        return {"error": str(e), "traceback": str(e._traceback_)}
 
 @app.post("/api/signup")
 async def signup(request: SignupRequest, db: Session = Depends(get_db)):
@@ -674,10 +682,10 @@ async def assess_symptoms(request: SymptomRequest):
             # Extract JSON from the response (Gemini might wrap it in markdown)
             content = response.content
             # Remove markdown code blocks if present
-            if '```json' in content:
-                content = content.split('```json')[1].split('```')[0].strip()
-            elif '```' in content:
-                content = content.split('```')[1].split('```')[0].strip()
+            if 'json' in content:
+                content = content.split('json')[1].split('')[0].strip()
+            elif '' in content:
+                content = content.split('')[1].split('')[0].strip()
                 
             analysis_data = json.loads(content)
             return SymptomAssessmentResponse(**analysis_data)
@@ -706,6 +714,6 @@ async def assess_symptoms(request: SymptomRequest):
         print(f"Error in symptom assessment: {e}")
         raise HTTPException(status_code=500, detail=f"Error analyzing symptoms: {str(e)}")
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
