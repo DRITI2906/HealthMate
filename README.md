@@ -81,8 +81,19 @@ Existing health apps usually focus on one problem at a time — step tracking, s
 
 - **🌍 Frontend + Backend Integration**: With React/Vite on the frontend and FastAPI on the backend, it’s fully designed for smooth integration and deployment. 
 
-## ScreenShots
+## 📸 ScreenShots
 
+## Landing page
+![Landing page](<screenshots/Landing.png>)
+
+## Dashboard
+![Dashboard](<screenshots/db.png>)
+
+![Chat Bot](<screenshots/chat.png>)
+
+![Symptom Checker](<screenshots/sc.png>)
+
+![Medication](<screenshots/Medication.png>)
 
 
 ## Developers Information
